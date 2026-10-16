@@ -1,0 +1,84 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <!--
+    org.vmx_mw.MediaManager1 on /org/vmxmw/MediaManager
+
+    Control plane only. Pixels never travel over D-Bus: SubscribeVideo hands
+    out the file descriptors of the shared dma-buf pool exactly once. In the
+    default "native" mode the buffers are filled by the camera driver itself
+    and keep the camera's pixel format (fourcc: NV12, YUYV or MJPG); only
+    video.pool_format="nv12" guarantees NV12. A frame is afterwards
+    identified by its slot index.
+
+    The pool belongs to one camera session. When the camera is reopened
+    (unplug, stall) the service sends StreamStateChanged "recovering" and
+    later "streaming"; every subscription_id and slot of the old session is
+    void and the client must call SubscribeVideo again. Every FrameReady must
+    be answered with ReleaseFrame, otherwise the slot stays leased until the
+    subscriber unsubscribes or leaves the bus.
+  -->
+  <interface name="org.vmx_mw.MediaManager1">
+
+    <!-- Subscribes to the video stream. queue_depth is the maximum number of
+         frames the client may hold at once (clamped by the service).
+         fds holds one dma-buf descriptor per pool slot; map or import them
+         once and keep them for the lifetime of the subscription. -->
+    <method name="SubscribeVideo">
+      <arg name="client_name" type="s" direction="in"/>
+      <arg name="queue_depth" type="u" direction="in"/>
+      <arg name="subscription_id" type="u" direction="out"/>
+      <arg name="stream_id" type="s" direction="out"/>
+      <arg name="width" type="u" direction="out"/>
+      <arg name="height" type="u" direction="out"/>
+      <arg name="fourcc" type="u" direction="out"/>
+      <arg name="stride" type="u" direction="out"/>
+      <arg name="uv_offset" type="u" direction="out"/>
+      <arg name="buffer_size" type="u" direction="out"/>
+      <arg name="fds" type="ah" direction="out"/>
+    </method>
+
+    <!-- Returns the shared audio ring (S16LE, interleaved), see
+         mw/common/audio_ring.h. The fd is a memfd; map it read-only. -->
+    <method name="SubscribeAudio">
+      <arg name="client_name" type="s" direction="in"/>
+      <arg name="stream_id" type="s" direction="out"/>
+      <arg name="sample_rate" type="u" direction="out"/>
+      <arg name="channels" type="u" direction="out"/>
+      <arg name="capacity_frames" type="u" direction="out"/>
+      <arg name="ring_fd" type="h" direction="out"/>
+    </method>
+
+    <method name="Unsubscribe">
+      <arg name="subscription_id" type="u" direction="in"/>
+    </method>
+
+    <!-- Intended to be called with the NO_REPLY_EXPECTED flag. -->
+    <method name="ReleaseFrame">
+      <arg name="subscription_id" type="u" direction="in"/>
+      <arg name="slot" type="u" direction="in"/>
+    </method>
+
+    <!-- Named counters: frames_captured, frames_published, ... -->
+    <method name="GetStats">
+      <arg name="stats" type="a(st)" direction="out"/>
+    </method>
+
+    <!-- Unicast to the subscriber that owns subscription_id. bytes_used is
+         the valid payload length (the JPEG size for MJPG; the full image
+         for NV12 and YUYV). -->
+    <signal name="FrameReady">
+      <arg name="subscription_id" type="u"/>
+      <arg name="slot" type="u"/>
+      <arg name="bytes_used" type="u"/>
+      <arg name="sequence" type="t"/>
+      <arg name="timestamp_ns" type="t"/>
+    </signal>
+
+    <!-- Broadcast. state is one of: starting, streaming, recovering. -->
+    <signal name="StreamStateChanged">
+      <arg name="stream_id" type="s"/>
+      <arg name="state" type="s"/>
+    </signal>
+  </interface>
+</node>

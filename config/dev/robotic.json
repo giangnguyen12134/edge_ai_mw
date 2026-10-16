@@ -1,0 +1,19 @@
+{
+  "bus": "user",
+  "log_level": "info",
+
+  "jetson": {
+    "host": "127.0.0.1",
+    "results_port": 9100,
+    "video_port": 9101
+  },
+
+  "send_results": true,
+  "send_video": true,
+
+  "video": {
+    "fps": 10,
+    "jpeg_quality": 70,
+    "encoder": "libjpeg"
+  }
+}

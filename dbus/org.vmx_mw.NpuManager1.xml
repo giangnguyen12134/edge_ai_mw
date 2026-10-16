@@ -1,0 +1,54 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <!--
+    org.vnx_mw.NpuManager1 on /org/vmxmw/NpuManager
+
+    Applications never touch the NPU. They listen for Result signals and may
+    toggle models. Results are small metadata messages (no file descriptors).
+  -->
+  <interface name="org.vnx_mw.NpuManager1">
+
+    <method name="ListModels">
+      <!-- name, kind, enabled, target_fps -->
+      <arg name="models" type="a(ssbd)" direction="out"/>
+    </method>
+
+    <method name="SetModelEnabled">
+      <arg name="name" type="s" direction="in"/>
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
+
+    <!-- The next detected utterance is stored as the voice print of name. -->
+    <method name="EnrollSpeaker">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+
+    <method name="RemoveSpeaker">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+
+    <method name="ListSpeakers">
+      <arg name="names" type="as" direction="out"/>
+    </method>
+
+    <method name="GetStats">
+      <arg name="stats" type="a(st)" direction="out"/>
+    </method>
+
+    <!-- Broadcast inference result.
+         kind: "detection" (face, object), "classification" (gesture),
+               "speaker" (VoiceSprint).
+         items: (label, score, x, y, w, h). x, y, w, h are normalised to the
+         frame (0..1); they are 0 for non-spatial kinds. For "speaker" the
+         label is the matched speaker or "unknown". sequence and timestamp_ns
+         are those of the source video frame (0 for audio results). -->
+    <signal name="Result">
+      <arg name="model" type="s"/>
+      <arg name="kind" type="s"/>
+      <arg name="sequence" type="t"/>
+      <arg name="timestamp_ns" type="t"/>
+      <arg name="items" type="a(sddddd)"/>
+    </signal>
+  </interface>
+</node>

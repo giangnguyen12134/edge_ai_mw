@@ -1,0 +1,13 @@
+# Rotation of the shared middleware log (sinks "file" in logging.json).
+# copytruncate: every service keeps the file open with O_APPEND and does not
+# reopen it, so the file is copied and truncated in place (a few lines written
+# during the copy can be lost).
+/var/log/genio-mw/*.log {
+    size 10M
+    rotate 5
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}

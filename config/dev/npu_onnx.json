@@ -1,0 +1,75 @@
+{
+  "bus": "user",
+  "log_level": "info",
+  "runtime": "cpu",
+  "allocator": "memfd",
+  "media_queue_depth": 2,
+  "speaker_db_path": "",
+  "thermal_path": "",
+  "models": [
+    {
+      "name": "face",
+      "kind": "detection",
+      "labels": [
+        "face"
+      ],
+      "target_fps": 15,
+      "priority": 30,
+      "input_width": 320,
+      "input_height": 320,
+      "resize_mode": "letterbox",
+      "box_format": "xyxy",
+      "score_threshold": 0.5,
+      "path": "tests/data/det_face.onnx"
+    },
+    {
+      "name": "gesture",
+      "kind": "detection",
+      "labels": [
+        "open_palm",
+        "fist",
+        "thumb_up"
+      ],
+      "target_fps": 10,
+      "priority": 20,
+      "gated_by": "face",
+      "gate_hold_ms": 1500,
+      "input_width": 224,
+      "input_height": 224,
+      "box_format": "xyxy",
+      "score_threshold": 0.5,
+      "path": "tests/data/det_gesture.onnx"
+    },
+    {
+      "name": "object",
+      "kind": "detection",
+      "labels": [
+        "person",
+        "chair",
+        "cup"
+      ],
+      "target_fps": 5,
+      "priority": 10,
+      "input_width": 416,
+      "input_height": 416,
+      "input_type": "float32",
+      "input_scale": 0.00392157,
+      "box_format": "xywh",
+      "coords_normalized": false,
+      "score_threshold": 0.4,
+      "path": "tests/data/det_object_xywh.onnx"
+    },
+    {
+      "name": "voiceprint",
+      "kind": "speaker",
+      "sample_rate": 16000,
+      "window_ms": 1500,
+      "min_speech_ms": 400,
+      "vad_threshold_db": -40.0,
+      "match_threshold": 0.6,
+      "path": "tests/data/speaker_stats.onnx"
+    }
+  ],
+  "onnx_library": "libonnxruntime.so",
+  "cpu_threads": 2
+}

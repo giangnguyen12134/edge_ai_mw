@@ -1,0 +1,4 @@
+{
+  "sinks": ["stderr", "file"],
+  "file": { "path": "/tmp/middleware.log" }
+}

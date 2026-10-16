@@ -1,0 +1,5 @@
+/etc/genio-mw/media.json
+/etc/genio-mw/npu.json
+/etc/genio-mw/robotic.json
+/etc/genio-mw/logging.json
+/etc/logrotate.d/genio-mw

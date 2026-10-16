@@ -1,0 +1,10 @@
+# Device access for the Genio middleware service user (member of "video").
+#
+# dma-buf heaps are root-only by default; MediaManager and NpuManager allocate
+# the shared frame pool and the model input tensors from them.
+SUBSYSTEM=="dma_heap", GROUP="video", MODE="0660"
+
+# NPU (APU) device node. The name differs between BSPs; find yours with
+#   ls -l /dev | grep -i -E 'apu|npu|neuron'
+# and uncomment and adapt the next line (see docs/PORTING.md):
+# KERNEL=="apusys", GROUP="video", MODE="0660"

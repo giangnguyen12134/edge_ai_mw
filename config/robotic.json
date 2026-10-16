@@ -1,0 +1,22 @@
+{
+  "bus": "system",
+  "log_level": "info",
+
+  "jetson": {
+    "host": "192.168.55.1",
+    "results_port": 9100,
+    "video_port": 9101,
+    "connect_timeout_ms": 1000,
+    "send_timeout_ms": 1000,
+    "reconnect_ms": 2000
+  },
+
+  "send_results": true,
+  "send_video": false,
+
+  "video": {
+    "fps": 15,
+    "jpeg_quality": 80,
+    "encoder": "libjpeg"
+  }
+}

@@ -1,0 +1,19 @@
+#!/bin/sh
+# Debian maintainer script of genio-mw.
+set -e
+
+if [ "$1" = "configure" ]; then
+  if command -v systemd-sysusers >/dev/null 2>&1; then
+    systemd-sysusers /usr/lib/sysusers.d/genio-mw.conf || true
+  fi
+  if command -v udevadm >/dev/null 2>&1; then
+    udevadm control --reload-rules || true
+    udevadm trigger --subsystem-match=dma_heap || true
+  fi
+  if command -v systemctl >/dev/null 2>&1; then
+    systemctl daemon-reload || true
+    systemctl reload dbus || true
+  fi
+fi
+
+exit 0

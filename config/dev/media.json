@@ -1,0 +1,26 @@
+{
+  "bus": "user",
+  "log_level": "info",
+
+  "video": {
+    "id": "camera0",
+    "source": "test_pattern",
+    "width": 640,
+    "height": 480,
+    "fps": 30,
+    "pixel_format": "NV12",
+    "pool_slots": 8,
+    "pool_format": "native",
+    "capture_io": "auto",
+    "allocator": "memfd"
+  },
+
+  "audio": {
+    "enabled": true,
+    "source": "sine",
+    "sample_rate": 16000,
+    "channels": 1,
+    "ring_ms": 3000,
+    "period_ms": 20
+  }
+}

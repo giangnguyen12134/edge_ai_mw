@@ -1,0 +1,5 @@
+{
+  "sinks": ["stderr", "file", "udp"],
+  "file": { "path": "/var/log/genio-mw/middleware.log" },
+  "udp": { "host": "192.168.1.10", "port": 514, "facility": 16, "max_bytes": 1200 }
+}

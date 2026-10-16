@@ -1,0 +1,78 @@
+{
+  "bus": "user",
+  "log_level": "info",
+  "runtime": "cpu",
+  "onnx_library": "/home/giangnguyen/working/VMX/primax/EdgeAI/vmx-mw/3rdparty/onnxruntime-x64/lib/libonnxruntime.so",
+  "cpu_threads": 2,
+  "allocator": "memfd",
+  "media_queue_depth": 2,
+  "speaker_db_path": "speakers.json",
+  "thermal_path": "/sys/class/thermal/thermal_zone0/temp",
+  "throttle_temp_c": 85.0,
+  "throttle_rate_scale": 0.5,
+  "models": [
+    {
+      "name": "face",
+      "kind": "detection",
+      "path": "models/face_detect.onnx",
+      "labels": [
+        "face"
+      ],
+      "target_fps": 15,
+      "priority": 30,
+      "input_width": 320,
+      "input_height": 320,
+      "color_order": "rgb",
+      "resize_mode": "letterbox",
+      "input_type": "uint8",
+      "box_format": "xyxy",
+      "score_threshold": 0.5
+    },
+    {
+      "name": "gesture",
+      "kind": "detection",
+      "path": "models/gesture.onnx",
+      "labels": [
+        "open_palm",
+        "fist",
+        "thumb_up",
+        "victory",
+        "point"
+      ],
+      "target_fps": 10,
+      "priority": 20,
+      "gated_by": "face",
+      "gate_hold_ms": 1500,
+      "input_width": 320,
+      "input_height": 320,
+      "resize_mode": "letterbox",
+      "box_format": "xyxy",
+      "score_threshold": 0.55
+    },
+    {
+      "name": "object",
+      "kind": "detection",
+      "path": "models/object_detect.onnx",
+      "target_fps": 5,
+      "priority": 10,
+      "input_width": 640,
+      "input_height": 640,
+      "resize_mode": "letterbox",
+      "input_type": "float32",
+      "input_mean": 0.0,
+      "input_scale": 0.00392157,
+      "box_format": "xywh",
+      "score_threshold": 0.4
+    },
+    {
+      "name": "voiceprint",
+      "kind": "speaker",
+      "path": "models/voiceprint.onnx",
+      "sample_rate": 16000,
+      "window_ms": 1500,
+      "min_speech_ms": 400,
+      "vad_threshold_db": -40.0,
+      "match_threshold": 0.6
+    }
+  ]
+}
